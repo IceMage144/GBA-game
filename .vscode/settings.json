@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "gba_video.h": "c",
+        "gba_hardware.h": "c",
+        "gba_display_control.h": "c"
+    },
+    "cmake.configureOnOpen": true
+}
