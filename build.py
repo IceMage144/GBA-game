@@ -15,8 +15,11 @@ import click
 
 from BuildLib.file_system import *
 from BuildLib.commands import *
+from BuildLib.image import *
 
 isdir = os.path.isdir
+splitext = os.path.splitext
+relpath = os.path.relpath
 
 temp_files_dir = 'temp_files'
 builds_dir = 'Builds'
@@ -84,7 +87,12 @@ def assets(base_folder: str, verbose: bool):
     build_assets(base_folder, verbose)
 
 def build_assets(base_folder: str, verbose: bool):
-    pass
+    change_dir(base_folder)
+    images_base_dir = 'sprites'
+    images = get_images(images_base_dir)
+    for image_path in images:
+        generate_header_from_sheet(splitext(relpath(image_path, images_base_dir))[0])
+    change_dir('..')
 
 @click.command()
 @click.argument('base_folder', default='.', type=click.Path(exists=True, dir_okay=True, file_okay=False))
