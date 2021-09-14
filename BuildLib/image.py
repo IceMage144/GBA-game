@@ -23,11 +23,11 @@ sheet_header_model = """#ifndef __{file_name}_SHEET__
 #include "palettes.h"
 #include "sprites.h"
 
-u16 {file_name}_palette[] = {{
+const u16 {file_name}_palette[] __attribute__((aligned(4))) = {{
     {palette_str}
 }};
 
-u16 {file_name}_sheet[] = {{
+const u16 {file_name}_sheet[] __attribute__((aligned(4))) = {{
     {sheet_str}
 }};
 
