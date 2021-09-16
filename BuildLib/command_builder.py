@@ -53,7 +53,7 @@ def create_build_executable_command(compiler: str, sources: list,
 
 def execute_command(command: str, verbose: bool = False) -> int:
     if verbose:
-        print(f'Executing: {command}', flush=True)
+        print_log(f'Executing: {command}')
 
     pipe = sp.Popen(
         command,
@@ -71,6 +71,6 @@ def execute_command(command: str, verbose: bool = False) -> int:
     else:
         if verbose:
             print_fail('FAILED')
-        print(stderr.decode('utf-8'), flush=True)
+        print_log(stderr.decode('utf-8'))
 
     return retcode

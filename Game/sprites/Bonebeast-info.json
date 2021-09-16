@@ -1,5 +1,13 @@
 {
     "width": 32,
     "height": 32,
-    "palette": "GBA"
+    "palette": "GBA",
+    "sprite_names": {
+        "WalkLeft": 0,
+        "Attack": 3
+    },
+    "animation_sizes": {
+        "Walk": 3,
+        "Attack": 3
+    }
 }

@@ -1,5 +1,20 @@
 {
     "width": 32,
     "height": 32,
-    "palette": "GBA"
+    "palette": "GBA",
+    "sprite_names": {
+        "WalkDown": 0,
+        "WalkUp": 3,
+        "WalkRight": 6,
+        "WalkLeft": 9,
+        "Die": 14,
+        "CastSpell": 16,
+        "Attack": 20
+    },
+    "animation_sizes": {
+        "Walk": 3,
+        "Die": 2,
+        "CastSpell": 4,
+        "Attack": 2
+    }
 }
