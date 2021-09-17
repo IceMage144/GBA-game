@@ -2,22 +2,35 @@
 #include "gba_systemcalls.h"
 
 #include "debug/debug.h"
-#include "palettes.h"
-#include "sprites.h"
+#include "palette.h"
+#include "sprite.h"
+#include "object.h"
 
-#include "sprites/HumanBase.h"
-#include "sprites/Bonebeast.h"
+#include "sprites/allies.h"
+#include "sprites/enemies.h"
 
 int main()
 {
     REG_DISPCNT = MODE_0 | OBJ_1D_MAP | OBJ_ON;
 
-    load_HumanBase_sheet(1, 0);
+    u8 palette_pos = NEW_PALETTE_POS;
+    u16 sprite_pos = NEW_SPRITE_POS;
 
-    volatile OBJATTR *test_attrs = &OAM[0];
-    test_attrs->attr0 = OBJ_Y(32) | ATTR0_COLOR_16 | ATTR0_SQUARE;
-    test_attrs->attr1 = OBJ_X(32) | ATTR1_SIZE_32;
-    test_attrs->attr2 = OBJ_CHAR(1) | ATTR2_PALETTE(0);
+    volatile OBJATTR *objattr1 = create_objattrs(
+        OBJ_Y(32) | ATTR0_COLOR_16 | ATTR0_SQUARE,
+        OBJ_X(32) | ATTR1_SIZE_32,
+        0
+    );
+    load_allies_sheet(objattr1, HumanBase_SHEET, &sprite_pos, &palette_pos);
+
+    volatile OBJATTR *objattr2 = create_objattrs(
+        OBJ_Y(32) | ATTR0_COLOR_16 | ATTR0_SQUARE,
+        OBJ_X(64) | ATTR1_SIZE_32,
+        OBJ_CHAR(sprite_pos) | ATTR2_PALETTE(palette_pos)
+    );
+
+    // clear_objattr_mem();
+    // clear_palette_mem();
 
     while (true)
     {

@@ -17,11 +17,11 @@ palettes_dir = 'palettes'
 sprites_dir = 'sprites'
 
 sheet_header_model = """#ifndef __{file_name}_SHEET__
-#define __{file_name}_SHEET__
+#define __{file_name}_SHEET_H__
 
 #include "gba_types.h"
-#include "palettes.h"
-#include "sprites.h"
+#include "palette.h"
+#include "sprite.h"
 
 {extra_info}
 
@@ -33,10 +33,11 @@ const u16 {file_name}_sheet[] __attribute__((aligned(4))) = {{
     {sheet_str}
 }};
 
-inline static void load_{file_name}_sheet(u16 start_tile, u8 palette_pos)
+inline static void load_{file_name}_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
 {{
     load_palette({file_name}_palette, {num_colors}, palette_pos);
-    load_sprite_4bpp({file_name}_sheet, {num_tiles}, start_tile);
+    load_sprite_4bpp({file_name}_sheet, {num_tiles}, sprite_pos);
+    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
 }}
 
 #endif"""

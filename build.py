@@ -16,6 +16,7 @@ import click
 from BuildLib.file_system import *
 from BuildLib.commands import *
 from BuildLib.image import *
+from BuildLib.image_groups import *
 
 isdir = os.path.isdir
 splitext = os.path.splitext
@@ -23,6 +24,8 @@ relpath = os.path.relpath
 
 temp_files_dir = 'temp_files'
 builds_dir = 'Builds'
+images_base_dir = 'sprites'
+sources_base_dir = 'source'
 
 @click.command()
 @click.argument('base_folder', type=click.Path(exists=True, dir_okay=True, file_okay=False))
@@ -59,7 +62,6 @@ def game(base_folder: str, debug: bool, verbose: bool):
         compile_flags[CFLAGS]['g'] = True
         compile_flags[CFLAGS]['gdwarf-2'] = True
 
-    sources_base_dir = 'source'
     sources = get_sources(sources_base_dir)
     obj_files = []
     for source in sources:
@@ -87,11 +89,23 @@ def assets(base_folder: str, verbose: bool):
     build_assets(base_folder, verbose)
 
 def build_assets(base_folder: str, verbose: bool):
+    build_sprites(base_folder, verbose)
+    build_sprite_groups(base_folder, verbose)
+
+def build_sprites(base_folder: str, verbose: bool):
     change_dir(base_folder)
-    images_base_dir = 'sprites'
+    print(images_base_dir)
     images = get_images(images_base_dir)
     for image_path in images:
         generate_header_from_sheet(splitext(relpath(image_path, images_base_dir))[0])
+    change_dir('..')
+
+def build_sprite_groups(base_folder: str, verbose: bool):
+    change_dir(base_folder)
+    for dir_name in os.listdir(images_base_dir):
+        dir_path = pjoin(images_base_dir, dir_name)
+        if isdir(dir_path):
+            generate_sheet_group_header(dir_path)
     change_dir('..')
 
 @click.command()

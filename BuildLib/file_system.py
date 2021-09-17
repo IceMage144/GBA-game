@@ -26,7 +26,7 @@ def get_files(base_dir: str, test_func):
             if test_func(file_name):
                 files.append(file_path)
         else:
-            files += get_sources(file_path)
+            files += get_files(file_path, test_func)
     return files
 
 def create_dir(dir_path: str):

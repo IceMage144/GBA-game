@@ -1,9 +1,9 @@
 #ifndef __Bonebeast_SHEET__
-#define __Bonebeast_SHEET__
+#define __Bonebeast_SHEET_H__
 
 #include "gba_types.h"
-#include "palettes.h"
-#include "sprites.h"
+#include "palette.h"
+#include "sprite.h"
 
 #define Bonebeast_WalkLeft_SPRITE 0
 #define Bonebeast_Attack_SPRITE 3
@@ -210,10 +210,11 @@ const u16 Bonebeast_sheet[] __attribute__((aligned(4))) = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-inline static void load_Bonebeast_sheet(u16 start_tile, u8 palette_pos)
+inline static void load_Bonebeast_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
 {
     load_palette(Bonebeast_palette, 5, palette_pos);
-    load_sprite_4bpp(Bonebeast_sheet, 96, start_tile);
+    load_sprite_4bpp(Bonebeast_sheet, 96, sprite_pos);
+    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
 }
 
 #endif

@@ -1,9 +1,9 @@
 #ifndef __HumanBase_SHEET__
-#define __HumanBase_SHEET__
+#define __HumanBase_SHEET_H__
 
 #include "gba_types.h"
-#include "palettes.h"
-#include "sprites.h"
+#include "palette.h"
+#include "sprite.h"
 
 #define HumanBase_WalkDown_SPRITE 0
 #define HumanBase_WalkUp_SPRITE 3
@@ -794,10 +794,11 @@ const u16 HumanBase_sheet[] __attribute__((aligned(4))) = {
     0x0012, 0x0000, 0x0011, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-inline static void load_HumanBase_sheet(u16 start_tile, u8 palette_pos)
+inline static void load_HumanBase_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
 {
     load_palette(HumanBase_palette, 9, palette_pos);
-    load_sprite_4bpp(HumanBase_sheet, 384, start_tile);
+    load_sprite_4bpp(HumanBase_sheet, 384, sprite_pos);
+    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
 }
 
 #endif
