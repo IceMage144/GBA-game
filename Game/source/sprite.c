@@ -24,7 +24,7 @@ void load_sprite_4bpp(const u16 sprite[], u16 num_tiles, u16* start_tile)
 
 void clear_sprite_mem()
 {
-    vu16 *mem = (vu16*) tile_mem;
+    vu16 *mem = (vu16*) tile_mem[4][1];
     for (u16 i = 0; i < free_sprite_mem_start * 16; i++)
     {
         mem[i] = 0x0000;

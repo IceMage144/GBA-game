@@ -33,11 +33,21 @@ const u16 {file_name}_sheet[] __attribute__((aligned(4))) = {{
     {sheet_str}
 }};
 
-inline static void load_{file_name}_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
+inline static void assign_{file_name}_sheet_attrs(volatile OBJATTR* objattr, u16 sprite_pos,
+    u8 palette_pos)
+{{
+    objattr->attr0 = objattr->attr0 & ~OBJ_SHAPE_MASK | ATTR0_{sprite_shape};
+    objattr->attr1 = objattr->attr1 & ~OBJ_SIZE_MASK | ATTR1_SIZE_{sprite_size};
+    objattr->attr2 = objattr->attr2 & ~(OBJ_CHAR_MASK | OBJ_PALETTE_MASK) |
+        OBJ_CHAR(sprite_pos) | ATTR2_PALETTE(palette_pos);
+}}
+
+inline static void load_{file_name}_sheet(volatile OBJATTR* objattr, u16* sprite_pos,
+    u8* palette_pos)
 {{
     load_palette({file_name}_palette, {num_colors}, palette_pos);
     load_sprite_4bpp({file_name}_sheet, {num_tiles}, sprite_pos);
-    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
+    assign_{file_name}_sheet_attrs(objattr, *sprite_pos, *palette_pos);
 }}
 
 #endif"""
@@ -48,6 +58,29 @@ extra_info_to_group_name = {
     'animation_sizes': 'ANIMATION_SIZE'
 }
 
+dimensions_to_attrs = {
+    8: {
+        8: ('SQUARE', 8),
+        16: ('TALL', 8),
+        32: ('TALL', 16)
+    },
+    16: {
+        8: ('WIDE', 8),
+        16: ('SQUARE', 16),
+        32: ('TALL', 32)
+    },
+    32: {
+        8: ('WIDE', 16),
+        16: ('WIDE', 32),
+        32: ('SQUARE', 32),
+        64: ('TALL', 64)
+    },
+    64: {
+        32: ('WIDE', 64),
+        64: ('SQUARE', 64)
+    }
+}
+
 def generate_header_from_sheet(sheet_path: str):
     print_log(f'Creating header from sheet {sheet_path}')
     sheet_path = pjoin(sprites_dir, sheet_path)
@@ -55,12 +88,23 @@ def generate_header_from_sheet(sheet_path: str):
     sheet_dir = dirname(sheet_path)
     sheet_info_path = pjoin(sheet_dir, sheet_name + '-info.json')
     if not isfile(sheet_info_path):
-        print_fail(f'FAILED: Could not find sheet info at {sheet_info_path}')
+        print_fail('FAILED')
+        print_log(f'Could not find sheet info at {sheet_info_path}')
         return
 
     sheet_info = json.load(open(sheet_info_path, 'r'))
     frame_w = sheet_info['width']
     frame_h = sheet_info['height']
+    if frame_h % 8 != 0 or frame_w % 8 != 0:
+        print_fail('FAILED')
+        print_log('Frame size error: Frame sides must be multiple of 8, but '
+                  'got a {frame_w}x{frame_h} frame.')
+        return
+    if frame_w > 64 or frame_h > 64 or frame_w < 8 or frame_h < 8:
+        print_fail('FAILED')
+        print_log('Frame size error: Frame sides must be in the range [8, 64], '
+                  'but got a {frame_w}x{frame_h} frame.')
+        return
 
     extra_info = get_extra_info(sheet_name, sheet_info)
 
@@ -73,7 +117,9 @@ def generate_header_from_sheet(sheet_path: str):
     create_dir(header_dir)
     header_path = pjoin(header_dir, sheet_name + '.h')
     header_content = build_sheet_header(header_path, encoded_sheet_data, palette_data,
-                                        extra_info)
+                                        frame_w, frame_h, extra_info)
+    if header_content is None:
+        return
     with open(header_path, 'w+') as f:
         f.write(header_content)
 
@@ -127,7 +173,8 @@ def get_palette_data(palette: Dict) -> list:
     return palette_data
 
 def build_sheet_header(file_path: str, sheet_data: list, palette_data: list,
-                       extra_info: str = '') -> str:
+                       frame_w: int, frame_h: int, extra_info: str = '') -> str:
+    file_name = splitext(basename(file_path))[0]
     if len(sheet_data) % 2 == 1:
         sheet_data = sheet_data + [0]
 
@@ -145,13 +192,21 @@ def build_sheet_header(file_path: str, sheet_data: list, palette_data: list,
         palette_str.append(formatted_color)
     palette_str = join_in_lines(palette_str, 4)
 
-    file_name = splitext(basename(file_path))[0]
+    attrs = dimensions_to_attrs[frame_w].get(frame_h)
+    if attrs is None:
+        print_fail('FAILED')
+        print_log(f'Cannot not encode {frame_w}x{frame_h} frames.')
+        return None
+
+    sprite_shape, sprite_size = attrs
     file_content = sheet_header_model.format(
         file_name = file_name,
         sheet_str = sheet_str,
         palette_str = palette_str,
         num_tiles = int(len(sheet_data) / 64),
         num_colors = len(palette_data),
+        sprite_shape = sprite_shape,
+        sprite_size = sprite_size,
         extra_info = extra_info
     )
     return file_content

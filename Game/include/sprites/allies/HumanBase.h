@@ -794,11 +794,21 @@ const u16 HumanBase_sheet[] __attribute__((aligned(4))) = {
     0x0012, 0x0000, 0x0011, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-inline static void load_HumanBase_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
+inline static void assign_HumanBase_sheet_attrs(volatile OBJATTR* objattr, u16 sprite_pos,
+    u8 palette_pos)
+{
+    objattr->attr0 = objattr->attr0 & ~OBJ_SHAPE_MASK | ATTR0_SQUARE;
+    objattr->attr1 = objattr->attr1 & ~OBJ_SIZE_MASK | ATTR1_SIZE_32;
+    objattr->attr2 = objattr->attr2 & ~(OBJ_CHAR_MASK | OBJ_PALETTE_MASK) |
+        OBJ_CHAR(sprite_pos) | ATTR2_PALETTE(palette_pos);
+}
+
+inline static void load_HumanBase_sheet(volatile OBJATTR* objattr, u16* sprite_pos,
+    u8* palette_pos)
 {
     load_palette(HumanBase_palette, 9, palette_pos);
     load_sprite_4bpp(HumanBase_sheet, 384, sprite_pos);
-    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
+    assign_HumanBase_sheet_attrs(objattr, *sprite_pos, *palette_pos);
 }
 
 #endif

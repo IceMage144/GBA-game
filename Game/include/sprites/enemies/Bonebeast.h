@@ -210,11 +210,21 @@ const u16 Bonebeast_sheet[] __attribute__((aligned(4))) = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-inline static void load_Bonebeast_sheet(volatile OBJATTR* objattr, u16* sprite_pos, u8* palette_pos)
+inline static void assign_Bonebeast_sheet_attrs(volatile OBJATTR* objattr, u16 sprite_pos,
+    u8 palette_pos)
+{
+    objattr->attr0 = objattr->attr0 & ~OBJ_SHAPE_MASK | ATTR0_SQUARE;
+    objattr->attr1 = objattr->attr1 & ~OBJ_SIZE_MASK | ATTR1_SIZE_32;
+    objattr->attr2 = objattr->attr2 & ~(OBJ_CHAR_MASK | OBJ_PALETTE_MASK) |
+        OBJ_CHAR(sprite_pos) | ATTR2_PALETTE(palette_pos);
+}
+
+inline static void load_Bonebeast_sheet(volatile OBJATTR* objattr, u16* sprite_pos,
+    u8* palette_pos)
 {
     load_palette(Bonebeast_palette, 5, palette_pos);
     load_sprite_4bpp(Bonebeast_sheet, 96, sprite_pos);
-    objattr->attr2 = OBJ_CHAR(*sprite_pos) | ATTR2_PALETTE(*palette_pos);
+    assign_Bonebeast_sheet_attrs(objattr, *sprite_pos, *palette_pos);
 }
 
 #endif

@@ -2,11 +2,11 @@
 
 static u16 free_objattr_mem_start = 0;
 
-volatile OBJATTR* create_objattrs(u16 attr0, u16 attr1, u16 attr2)
+volatile OBJATTR* create_objattrs(u16 x, u16 y, u16 attr0, u16 attr1, u16 attr2)
 {
     volatile OBJATTR *new_objattrs = &OAM[free_objattr_mem_start];
-    new_objattrs->attr0 = attr0;
-    new_objattrs->attr1 = attr1;
+    new_objattrs->attr0 = attr0 | OBJ_Y(y);
+    new_objattrs->attr1 = attr1 | OBJ_X(x);
     new_objattrs->attr2 = attr2;
     free_objattr_mem_start++;
     return new_objattrs;
