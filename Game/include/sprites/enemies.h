@@ -5,7 +5,7 @@
 
 #define Bonebeast_SHEET 0
 
-void load_enemies_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_tile,
+static void load_enemies_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_tile,
     u8* palette_pos)
 {
     switch (sheet_id)
@@ -16,7 +16,7 @@ void load_enemies_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_tile,
     }
 }
 
-void assign_enemies_sheet_attrs(volatile OBJATTR* objattr, u8 sheet_id, u16 start_tile,
+static void assign_enemies_sheet_attrs(volatile OBJATTR* objattr, u8 sheet_id, u16 start_tile,
     u8 palette_pos)
 {
     switch (sheet_id)

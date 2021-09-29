@@ -12,11 +12,17 @@ def is_source(file_name):
 def is_image(file_name):
     return file_name.endswith('.png')
 
+def is_font(file_name):
+    return file_name.endswith('.ttf')
+
 def get_sources(base_dir):
     return get_files(base_dir, is_source)
 
 def get_images(base_dir):
     return get_files(base_dir, is_image)
+
+def get_fonts(base_dir):
+    return get_files(base_dir, is_font)
 
 def get_files(base_dir: str, test_func):
     files = []

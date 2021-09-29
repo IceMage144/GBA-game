@@ -17,13 +17,13 @@
 #define HumanBase_CastSpell_ANIMATION_SIZE 4
 #define HumanBase_Attack_ANIMATION_SIZE 2
 
-const u16 HumanBase_palette[] __attribute__((aligned(4))) = {
+static const u16 HumanBase_palette[] __attribute__((aligned(4))) = {
     0x0000, 0x3238, 0x4B3D, 0x0D30,
     0x6B9F, 0x3694, 0x2D6B, 0x4A52,
     0x6318
 };
 
-const u16 HumanBase_sheet[] __attribute__((aligned(4))) = {
+static const u16 HumanBase_sheet[] __attribute__((aligned(4))) = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,

@@ -8,6 +8,7 @@ dirname = os.path.dirname
 splitext = os.path.splitext
 pjoin = os.path.join
 
+# TODO: Create .c file with these functions, so I can remove "static" keyword
 sheet_group_header_model = '''#ifndef __{group_name}_SHEET_GROUP_H__
 #define __{group_name}_SHEET_GROUP_H__
 
@@ -15,7 +16,7 @@ sheet_group_header_model = '''#ifndef __{group_name}_SHEET_GROUP_H__
 
 {defines}
 
-void load_{group_name}_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_tile,
+static void load_{group_name}_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_tile,
     u8* palette_pos)
 {{
     switch (sheet_id)
@@ -24,7 +25,7 @@ void load_{group_name}_sheet(volatile OBJATTR* objattr, u8 sheet_id, u16* start_
     }}
 }}
 
-void assign_{group_name}_sheet_attrs(volatile OBJATTR* objattr, u8 sheet_id, u16 start_tile,
+static void assign_{group_name}_sheet_attrs(volatile OBJATTR* objattr, u8 sheet_id, u16 start_tile,
     u8 palette_pos)
 {{
     switch (sheet_id)

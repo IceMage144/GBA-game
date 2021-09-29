@@ -17,6 +17,7 @@ from BuildLib.file_system import *
 from BuildLib.commands import *
 from BuildLib.image import *
 from BuildLib.image_groups import *
+from BuildLib.font import *
 
 isdir = os.path.isdir
 splitext = os.path.splitext
@@ -26,6 +27,7 @@ temp_files_dir = 'temp_files'
 builds_dir = 'Builds'
 images_base_dir = 'sprites'
 sources_base_dir = 'source'
+fonts_base_dir = 'fonts'
 
 @click.command()
 @click.argument('base_folder', type=click.Path(exists=True, dir_okay=True, file_okay=False))
@@ -94,7 +96,6 @@ def build_assets(base_folder: str, verbose: bool):
 
 def build_sprites(base_folder: str, verbose: bool):
     change_dir(base_folder)
-    print(images_base_dir)
     images = get_images(images_base_dir)
     for image_path in images:
         generate_header_from_sheet(splitext(relpath(image_path, images_base_dir))[0])
@@ -106,6 +107,13 @@ def build_sprite_groups(base_folder: str, verbose: bool):
         dir_path = pjoin(images_base_dir, dir_name)
         if isdir(dir_path):
             generate_sheet_group_header(dir_path)
+    change_dir('..')
+
+def build_fonts(base_folder: str, verbose: bool):
+    change_dir(base_folder)
+    fonts = get_fonts(fonts_base_dir)
+    for font_path in fonts:
+        generate_header_from_font(splitext(relpath(font_path, fonts_base_dir))[0])
     change_dir('..')
 
 @click.command()

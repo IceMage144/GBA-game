@@ -16,6 +16,8 @@ splitext = os.path.splitext
 palettes_dir = 'palettes'
 sprites_dir = 'sprites'
 
+# TODO: Create .c file with these constants, so I can remove "static" keyword
+# (change it to "extern")
 sheet_header_model = """#ifndef __{file_name}_SHEET__
 #define __{file_name}_SHEET_H__
 
@@ -25,11 +27,11 @@ sheet_header_model = """#ifndef __{file_name}_SHEET__
 
 {extra_info}
 
-const u16 {file_name}_palette[] __attribute__((aligned(4))) = {{
+static const u16 {file_name}_palette[] __attribute__((aligned(4))) = {{
     {palette_str}
 }};
 
-const u16 {file_name}_sheet[] __attribute__((aligned(4))) = {{
+static const u16 {file_name}_sheet[] __attribute__((aligned(4))) = {{
     {sheet_str}
 }};
 

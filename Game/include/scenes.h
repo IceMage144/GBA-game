@@ -3,7 +3,8 @@
 
 #include "gba_types.h"
 
-typedef enum {
+typedef enum scene_id
+{
     NONE_SCENE = 0,
     START_SCENE = 1,
     TEST1_SCENE = 2,

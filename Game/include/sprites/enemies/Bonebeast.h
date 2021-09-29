@@ -10,12 +10,12 @@
 #define Bonebeast_Walk_ANIMATION_SIZE 3
 #define Bonebeast_Attack_ANIMATION_SIZE 3
 
-const u16 Bonebeast_palette[] __attribute__((aligned(4))) = {
+static const u16 Bonebeast_palette[] __attribute__((aligned(4))) = {
     0x0022, 0x112E, 0x0A38, 0x3B1D,
     0x77FF
 };
 
-const u16 Bonebeast_sheet[] __attribute__((aligned(4))) = {
+static const u16 Bonebeast_sheet[] __attribute__((aligned(4))) = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1000, 0x0000, 0x2100,

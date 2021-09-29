@@ -22,6 +22,12 @@ void load_sprite_4bpp(const u16 sprite[], u16 num_tiles, u16* start_tile)
     }
 }
 
+void load_sprite_1bpp(const u16 sprite[], u16 num_tiles, u16* start_tile, SimpleColor color)
+{
+    
+}
+
+
 void clear_sprite_mem()
 {
     vu16 *mem = (vu16*) tile_mem[4][1];

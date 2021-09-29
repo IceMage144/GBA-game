@@ -1,11 +1,4 @@
-#include "gba_sprites.h"
-#include "gba_systemcalls.h"
-
-#include "sprite.h"
-#include "object.h"
 #include "scenes/test1_scene.h"
-
-#include "sprites/allies.h"
 
 void Test1Scene_load_scene()
 {

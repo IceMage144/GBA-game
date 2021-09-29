@@ -4,6 +4,8 @@
 #include "gba_types.h"
 #include "gba_sprites.h"
 
+#include "simple_palette.h"
+
 #define tile_mem ((volatile tile_block *)VRAM)
 
 typedef u16       tile_4bpp[16];
@@ -37,6 +39,7 @@ static const u8 tile_4pp_size = sizeof(tile_4bpp) * sizeof(u8) / sizeof(u16);
 
 
 void load_sprite_4bpp(const u16 sprite[], u16 num_tiles, u16* start_tile);
+void load_sprite_1bpp(const u16 sprite[], u16 num_tiles, u16* start_tile, SimpleColor color);
 void clear_sprite_mem();
 
 #endif
