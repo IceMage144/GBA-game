@@ -84,7 +84,7 @@ dimensions_to_attrs = {
 }
 
 def generate_header_from_sheet(sheet_path: str):
-    print_log(f'Creating header from sheet {sheet_path}')
+    print_log(f'Creating sheet header from \'{sheet_path}\' sheet')
     sheet_path = pjoin(sprites_dir, sheet_path)
     sheet_name = basename(sheet_path)
     sheet_dir = dirname(sheet_path)
@@ -186,6 +186,8 @@ def build_sheet_header(file_path: str, sheet_data: list, palette_data: list,
             (sheet_data[i + 1] << 4) + sheet_data[i]
         formatted_value = '0x{:04X}'.format(value)
         sheet_str.append(formatted_value)
+    # TODO: Think about compression
+    # sheet_str = compress_hex_list(sheet_str)
     sheet_str = join_in_lines(sheet_str, 8)
 
     palette_str = []
@@ -242,8 +244,22 @@ def build_define_lines(sheet_name: str, group_identifier: str, values: Dict) -> 
         defines.append(define)
     return '\n'.join(defines)
 
-def compress_hex_list(hex_list: list):
-    pass
+def compress_hex_list(hex_list: list) -> list:
+    tile_w = 8
+    tile_h = 8
+    tile_size = int(tile_h * tile_w / 4)
+    num_tiles = int(len(hex_list) / tile_size)
+    compressed_list = []
+    for tile_num in range(num_tiles):
+        tile = []
+        for chunk_num in range(tile_size):
+            tile.append(hex_list[tile_num * tile_size + chunk_num])
+        compressed_tile = compress_tile(tile)
+        compressed_list += compressed_tile
+    return compressed_list
+
+def compress_tile(tile: list) -> list:
+    return tile
 
 def color_to_16_bits(r, g, b):
     return ((b >> 3) << 10) + ((g >> 3) << 5) + (r >> 3)

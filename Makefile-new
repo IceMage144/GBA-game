@@ -1,0 +1,21 @@
+CC := arm-none-eabi-gcc
+OBJCOPY := arm-none-eabi-objcopy
+GBAFIX := gbafix
+
+ARCH := -mthumb -mthumb-interwork
+LIBS := -lmm -lgba
+CFLAGS := -Wall -O3 -mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer -ffast-math $(ARCH) $(LIBS)
+SPECSFLAGS := -specs=gba.specs
+
+GBADemo/GBADemo.gba: GBADemo/GBADemo.elf
+	$(OBJCOPY) -v -O binary $^ $@
+	$(GBAFIX) $@
+
+GBADemo/GBADemo.elf: GBADemo/build/main.o
+	$(CC) $^ -o $@ $(SPECSFLAGS)
+
+GBADemo/build/main.o: GBADemo/source/main.c
+	$(CC) $^ $(CFLAGS) -c
+
+# GBADemo/build/*.o: GBADemo/source/*.c GBADemo/include/*.h
+# 	$(CC) $^ $(CFLAGS) -c

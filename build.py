@@ -93,6 +93,7 @@ def assets(base_folder: str, verbose: bool):
 def build_assets(base_folder: str, verbose: bool):
     build_sprites(base_folder, verbose)
     build_sprite_groups(base_folder, verbose)
+    build_fonts(base_folder, verbose)
 
 def build_sprites(base_folder: str, verbose: bool):
     change_dir(base_folder)

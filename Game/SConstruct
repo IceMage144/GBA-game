@@ -1,0 +1,132 @@
+#!python
+import os
+from SCons.Script import *
+
+pjoin = os.path.join
+isfile = os.path.isfile
+
+def is_source(file_name):
+    return file_name.endswith('.c') and file_name.find('test') == -1
+
+def is_header(file_name):
+    return file_name.endswith('.h') and file_name.find('test') == -1
+
+def get_files_rec(base_dir, test_func):
+    files = []
+    for file_name in os.listdir(base_dir):
+        file_path = pjoin(base_dir, file_name)
+        if isfile(file_path):
+            if test_func(file_name):
+                files.append(file_path)
+        else:
+            files += get_files_rec(file_path, test_func)
+    return files
+
+def get_sources(base_dir):
+    return get_files_rec(base_dir, is_source)
+
+def get_headers(base_dir):
+    return get_files_rec(base_dir, is_header)
+
+def create_gba_builder(env):
+    gba_builder = Builder(
+        src_suffix = '.elf',
+        suffix = '.gba',
+        action = [
+            'arm-none-eabi-objcopy -v -O binary $SOURCE $TARGET',
+            'gbafix $TARGET'
+        ]
+    )
+    env.Append(BUILDERS = {'GameBoyAdvanced': gba_builder})
+
+def build_source(env, target, devkit_path):
+    gba_lib_path = pjoin(devkit_path, 'libgba')
+    env.Program(
+        source = get_sources('source'),
+        target = 'GBADemo',
+        PROGSUFFIX = '.elf',
+        CC = 'arm-none-eabi-gcc',
+        CCFLAGS = [
+            '-gdwarf-2',
+            '-Wall',
+            '-mcpu=arm7tdmi',
+            '-mtune=arm7tdmi',
+            '-mthumb',
+            '-mthumb-interwork',
+            '-specs=gba.specs'
+        ],
+        CCCOM = '$CC -c -o $TARGET $SOURCE $_CPPINCFLAGS $CCFLAGS',
+        INCPREFIX = '-I',
+        CPPPATH = [
+            'include',
+            pjoin(gba_lib_path, 'include')
+        ],
+        CPPSUFFIXES = ['.c', '.h'],
+        # LIBPATH = os.path.relpath(pjoin(gba_lib_path, 'lib')),
+        # LIBS = ['gba', 'mm']
+    )
+    env.Default('GBADemo.elf')
+
+    # env.Replace(CC = 'arm-none-eabi-gcc')
+    # env.Append(CCFLAGS = [
+    #     '-gdwarf-2',
+    #     '-Wall',
+    #     '-mcpu=arm7tdmi',
+    #     '-mtune=arm7tdmi',
+    #     '-mthumb',
+    #     '-mthumb-interwork'
+    # ])
+    # env.Append(CPPPATH = 'include') # get_headers('include'))
+    # env.Append(CPPPATH = [
+    #     'include',
+    #     pjoin(gba_lib_path, 'include')
+    # ]) # get_headers(pjoin(gba_lib_path, 'include')))
+    # env.Append(CPPSUFFIXES = ['.c', '.h'])
+    # env.Append(LIBPATH = pjoin(gba_lib_path, 'lib'))
+    # env.Append(LIBS = ['a'])
+
+def build_gba(env):
+    env.Command(
+        source = 'GBADemo.elf',
+        target = 'GBADemo.gba',
+        action = [
+            'arm-none-eabi-objcopy -v -O binary $SOURCE $TARGET',
+            'gbafix $TARGET'
+        ]
+    )
+    env.Default('GBADemo.gba')
+
+def build_game():
+    target = ARGUMENTS.get('target', 'release')
+
+    # This makes sure to keep the session environment variables on windows, 
+    # that way you can run scons in a vs 2017 prompt and it will find all the required tools
+    os_environ = os.environ.copy()
+    env = Environment(ENV = os_environ)
+    # create_gba_builder(env)
+    build_source(env, target, os_environ['DEVKITPRO'])
+    build_gba(env)
+
+    # sources = get_sources('source')
+    # env.Program('GBADemo', sources, PROGSUFFIX = '.elf')
+    # env.Default('GBADemo.elf')
+
+    # env.GameBoyAdvanced(
+    #     source = 'GBADemo.elf',
+    #     target = 'GBADemo.gba'
+    # )
+    # env.Default('GBADemo.gba')
+
+    return
+
+    # library = env.SharedLibrary(target = final_lib_path, source = sources)
+    # Default(library)
+    env.Program(pjoin(proj_path, 'GBADemo'), sources)
+    Move(pjoin(proj_path, 'GBADemo'), pjoin(proj_path, 'GBADemo.elf'))
+    env.GameBoyAdvanced(
+        source = pjoin(proj_path, 'GBADemo.elf'),
+        target = pjoin(proj_path, 'GBADemo.gba')
+    )
+    Default(pjoin(proj_path, 'GBADemo.gba'))
+
+build_game()

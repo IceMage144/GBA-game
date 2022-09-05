@@ -46,7 +46,7 @@ assign_case_model = '''case {file_name}_SHEET:
 
 def generate_sheet_group_header(base_path: str):
     group_name = basename(base_path)
-    print_log(f'Creating sheet group header from folder {group_name}')
+    print_log(f'Creating sheet group header from \'{group_name}\' folder')
     sheet_id = 0
     includes = []
     defines = []

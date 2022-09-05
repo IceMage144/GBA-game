@@ -12,6 +12,7 @@ void Test1Scene_load_scene()
 
     volatile OBJATTR *objattr2 = create_objattrs(64, 32, 0, 0, 0);
     assign_allies_sheet_attrs(objattr2, HumanBase_SHEET, sprite_pos, palette_pos);
+    objattr2->attr2 = objattr2->attr2 & ~OBJ_PALETTE_MASK | OBJ_PALETTE(SIMPLE_PALETTE_POS);
 }
 
 void Test1Scene_update_scene()
